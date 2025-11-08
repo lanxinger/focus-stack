@@ -75,7 +75,34 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: focus-stack/distrib/focus-stack_MacOSX.zip
-          name: Focus-stack Mac OS X application
+          name: Focus-stack Mac OS X 14 application
+
+  mac_binary_26:
+    name: Build binary on Mac OS X 26
+    runs-on: macos-26
+
+    steps:
+      - name: Check out code from GitHub
+        uses: actions/checkout@v4
+        with:
+          path: focus-stack
+          fetch-depth: "0"
+
+      - name: Install build dependencies
+        run: |
+          brew install opencv pkg-config dylibbundler
+
+      - name: Build binary
+        run: |
+          cd focus-stack
+          make
+          sudo make distrib/focus-stack_MacOSX.zip
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          path: focus-stack/distrib/focus-stack_MacOSX.zip
+          name: Focus-stack Mac OS X 26 application
 
   windows_binary:
     name: Build binary on Windows 2022
@@ -137,7 +164,7 @@ jobs:
           name: Focus-stack Windows debug symbols
 
   release:
-    needs: [linux_binary, mac_binary, windows_binary]
+    needs: [linux_binary, mac_binary, mac_binary_26, windows_binary]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -148,10 +175,16 @@ jobs:
           path: focus-stack
           fetch-depth: "0"
 
-      - name: Download Mac OS X artifact
+      - name: Download Mac OS X 14 artifact
         uses: actions/download-artifact@v4
         with:
-          name: Focus-stack Mac OS X application
+          name: Focus-stack Mac OS X 14 application
+          path: focus-stack/distrib
+
+      - name: Download Mac OS X 26 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Focus-stack Mac OS X 26 application
           path: focus-stack/distrib
 
       - name: Download Ubuntu package artifact
