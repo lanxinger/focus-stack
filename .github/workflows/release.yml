@@ -36,13 +36,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: focus-stack/DEBUILD/*.deb
-          name: Focus-stack Ubuntu 20.04 package
-      
+          name: Focus-stack Ubuntu 22.04 package
+
       - name: Upload ddeb
         uses: actions/upload-artifact@v4
         with:
           path: focus-stack/DEBUILD/*.ddeb
-          name: Focus-stack Ubuntu 20.04 debug symbols
+          name: Focus-stack Ubuntu 22.04 debug symbols
 
       - name: Upload appimage
         uses: actions/upload-artifact@v4
@@ -138,24 +138,39 @@ jobs:
 
   release:
     needs: [linux_binary, mac_binary, windows_binary]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v4
         with:
           path: focus-stack
           fetch-depth: "0"
-      
-      - name: Download artifacts
-        run: |
-          mkdir -p focus-stack/distrib
-          cd focus-stack/distrib
-          gh run --repo ${GITHUB_REPOSITORY} download -n 'Focus-stack Mac OS X application'
-          gh run --repo ${GITHUB_REPOSITORY} download -n 'Focus-stack Ubuntu 20.04 package'
-          gh run --repo ${GITHUB_REPOSITORY} download -n 'Focus-stack Linux x86_64 AppImage'
-          gh run --repo ${GITHUB_REPOSITORY} download -n 'Focus-stack Windows binary'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Mac OS X artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Focus-stack Mac OS X application
+          path: focus-stack/distrib
+
+      - name: Download Ubuntu package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Focus-stack Ubuntu 22.04 package
+          path: focus-stack/distrib
+
+      - name: Download AppImage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Focus-stack Linux x86_64 AppImage
+          path: focus-stack/distrib
+
+      - name: Download Windows binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Focus-stack Windows binary
+          path: focus-stack/distrib
       
       - name: List artifacts
         run: |
