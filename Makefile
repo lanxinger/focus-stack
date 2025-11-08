@@ -69,11 +69,11 @@ install: all
 make_debuild:
 	rm -rf DEBUILD
 	mkdir -p DEBUILD
-	git archive --prefix=focus-stack.orig/ --format=tar.gz HEAD > DEBUILD/focus-stack_0.0+git$(VERSION).orig.tar.gz
-	(cd DEBUILD && tar xzf focus-stack_0.0+git$(VERSION).orig.tar.gz && cp -pr focus-stack.orig focus-stack)
+	git archive --prefix=focus-stack.orig/ --format=tar.gz HEAD > DEBUILD/focus-stack_1.1+git$(VERSION).orig.tar.gz
+	(cd DEBUILD && tar xzf focus-stack_1.1+git$(VERSION).orig.tar.gz && cp -pr focus-stack.orig focus-stack)
 
 builddeb: make_debuild
-	(cd DEBUILD/focus-stack && dch -v 0.0+git$(VERSION) "Git build" && debuild -uc -us -b)
+	(cd DEBUILD/focus-stack && dch -v 1.1+git$(VERSION) "Git build" && debuild -uc -us -b)
 
 builddeb_signed: make_debuild
 	(cd DEBUILD/focus-stack && debuild -S)
