@@ -168,6 +168,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+      actions: read
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v4
