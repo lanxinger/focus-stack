@@ -136,12 +136,35 @@ jobs:
           path: |
             C:\Users\runneradmin\AppData\Local\vcpkg\archives
             C:\vcpkg\installed
-          key: vcpkg-win2022-cache-v2
+          key: vcpkg-win2022-cache-v3
 
       - name: Install OpenCV dependency
         shell: cmd
         run: |
-          vcpkg install opencv:x64-windows
+          vcpkg install opencv4:x64-windows
+
+      - name: Verify OpenCV installation
+        shell: powershell
+        run: |
+          Write-Host "Checking vcpkg installation directories..."
+          if (Test-Path "C:\vcpkg\installed\x64-windows\include\opencv2") {
+            Write-Host "✓ OpenCV headers found at C:\vcpkg\installed\x64-windows\include\opencv2"
+            Get-ChildItem "C:\vcpkg\installed\x64-windows\include\opencv2" | Select-Object -First 10
+          } else {
+            Write-Host "✗ OpenCV headers NOT found at C:\vcpkg\installed\x64-windows\include\opencv2"
+            Write-Host "Listing C:\vcpkg\installed\x64-windows\include:"
+            if (Test-Path "C:\vcpkg\installed\x64-windows\include") {
+              Get-ChildItem "C:\vcpkg\installed\x64-windows\include"
+            }
+            exit 1
+          }
+          if (Test-Path "C:\vcpkg\installed\x64-windows\lib") {
+            Write-Host "✓ Library directory exists"
+            Get-ChildItem "C:\vcpkg\installed\x64-windows\lib\opencv*.lib"
+          } else {
+            Write-Host "✗ Library directory NOT found"
+            exit 1
+          }
       
       - name: Build binary
         shell: cmd
