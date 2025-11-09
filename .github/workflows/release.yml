@@ -136,7 +136,7 @@ jobs:
           path: |
             C:\Users\runneradmin\AppData\Local\vcpkg\archives
             C:\vcpkg\installed
-          key: vcpkg-win2022-cache
+          key: vcpkg-win2022-cache-v2
 
       - name: Install OpenCV dependency
         shell: cmd
