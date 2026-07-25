@@ -219,7 +219,9 @@ jobs:
           git tag --force latest
           git push origin --force latest
           cd distrib
-          gh api repos/${GITHUB_REPOSITORY}/releases/tags/latest | jq -r '.assets[] | [.url] | @tsv' | xargs -n 1 gh api -X DELETE || true
+          if ! gh release view --repo ${GITHUB_REPOSITORY} latest >/dev/null 2>&1; then
+            gh release create --repo ${GITHUB_REPOSITORY} latest --title "Latest build" --notes "Latest automated build from master."
+          fi
           gh release upload --repo ${GITHUB_REPOSITORY} --clobber latest *
 
 
