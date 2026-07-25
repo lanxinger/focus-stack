@@ -8,8 +8,8 @@ DESTDIR ?=
 prefix ?= /usr/local
 
 # Try to get opencv path from pkg-config
-CXXFLAGS += $(shell pkg-config --silence-errors --cflags-only-I opencv4 || pkg-config --cflags-only-I opencv)
-LDFLAGS += $(shell pkg-config --silence-errors --libs-only-L opencv4 || pkg-config --silence-errors --cflags-only-I opencv)
+CXXFLAGS += $(shell pkg-config --silence-errors --cflags-only-I opencv4 || pkg-config --silence-errors --cflags-only-I opencv || brew --prefix opencv 2>/dev/null | sed 's|^|-I|; s|$$|/include/opencv5|')
+LDFLAGS += $(shell pkg-config --silence-errors --libs-only-L opencv4 || pkg-config --silence-errors --libs-only-L opencv || brew --prefix opencv 2>/dev/null | sed 's|^|-L|; s|$$|/lib|')
 
 # Required compilation options
 CXXFLAGS += --std=c++14
