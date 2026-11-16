@@ -10,6 +10,16 @@ Task_Wavelet_OpenCL::Task_Wavelet_OpenCL(std::shared_ptr<ImgTask> input, bool in
 
 void Task_Wavelet_OpenCL::task()
 {
+  // OpenCV's OpenCL enable flag is thread-local. The main-thread check in
+  // FocusStack::start() does not enable it on the worker executing this task.
+  // Enable it before creating any UMat, or OpenCV may allocate CPU storage
+  // without the cl_mem handle required by our explicit OpenCL kernels.
+  cv::ocl::setUseOpenCL(true);
+  if (!cv::ocl::useOpenCL())
+  {
+    throw std::runtime_error("OpenCL unavailable on wavelet worker thread");
+  }
+
   if (!m_inverse)
   {
     // Perform decomposition from real-valued image to complex wavelets

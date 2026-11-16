@@ -52,6 +52,13 @@ update_docs: docs/focus-stack.1 docs/focus-stack.html
 run_unittests: build/unittests
 	build/unittests
 
+# Requires a working OpenCL GPU; unavailable OpenCL is a failure, not a skip.
+run_opencl_thread_state_test: build/opencl-thread-state
+	build/opencl-thread-state
+
+build/opencl-thread-state: tests/opencl_thread_state.cc $(OBJS)
+	$(CXX) $(CXXFLAGS) -Isrc -o $@ $^ $(LDFLAGS)
+
 run_tests: build/focus-stack
 	build/focus-stack --align-keep-size --output=build/pcb.jpg examples/pcb/pcb*.jpg
 	idiff -fail 0.1 -failpercent 1 -warnpercent 100 build/pcb.jpg examples/pcb/expected.jpg
